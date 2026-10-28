@@ -15,9 +15,9 @@ Deux versions, **même service natif** (`kotlin-app/.../NetworkMonitorService.kt
 - **Re-test adaptatif** : toutes les 30 s si Faible/Mauvais ; 60 s → 2 min → 5 min tant que l'état est stable ; durées doublées écran éteint.
 - **Anti-clignotement** : un nouvel état doit être mesuré 2 fois (re-mesure après 8 s) avant l'alerte. La perte totale de connexion alerte immédiatement.
 - **Ping** : handshake TCP vers 1.1.1.1:443 (l'ICMP est interdit sans root), 8 échantillons liés au `Network` actif. **Gigue** = moyenne des écarts entre RTT consécutifs. **Perte** = échecs / 8.
-- **Débit** : 1 Mo, rare (15 min en Wi-Fi, 30 min en mobile), jamais sur un réseau déjà mauvais.
+- **Débits descendant et montant** : deux tests de 1 Mo, rares (15 min en Wi-Fi, 30 min en mobile), jamais sur un réseau déjà mauvais. Le montant est affiché séparément et n'influence pas le score ; le descendant utilise un seuil adapté au transport.
 - **Signal** : lecture passive (RSSI Wi-Fi ; niveau cellulaire), aucun scan radio.
-- Aucun WakeLock. Le processus ne travaille qu'au réveil d'un cycle.
+- Aucun WakeLock ni animation continue de l'interface. L'image de fond est dessinée une fois ; le service ne mesure le réseau qu'aux changements détectés ou au réveil d'un cycle adaptatif.
 
 ## Seuils (modifiables dans `QualityEvaluator`, `NetworkQuality.kt`)
 
@@ -27,10 +27,28 @@ Deux versions, **même service natif** (`kotlin-app/.../NetworkMonitorService.kt
 |---|---|
 | Mauvais | pas d'internet, ou perte > 0 %, ou ping > 100 ms, ou gigue > 40 ms |
 | Faible | ping 51–100 ms, ou gigue 21–40 ms, ou signal faible |
-| Excellent | ping < 20 ms, gigue < 5 ms, et signal très fort **ou** débit > 25 Mbps |
+| Excellent | ping < 20 ms, gigue < 5 ms, et signal très fort **ou** débit descendant > 25 Mbps (Wi-Fi/autre) ou > 5 Mbps (cellulaire) |
 | Moyen | tout le reste (ping 20–50, gigue 5–20, signal modéré) |
 
-Si le signal est illisible (certains appareils), il ne pénalise pas : ping et gigue décident.
+Si le signal est illisible (certains appareils), il ne pénalise pas : ping et gigue décident. Un débit descendant de plus de 5 Mbps peut remplacer le signal très fort sur le cellulaire, contre 25 Mbps en Wi-Fi/autre.
+
+## Onglet « Usages »
+
+Les indicateurs sont calculés à partir du débit descendant mesuré et, pour le cloud gaming, du ping :
+
+| Usage | Seuil |
+|---|---|
+| Cloud gaming, 1080p 60 fps / 4K | ≥ 25 Mbps, ping < 30 ms, gigue ≤ 20 ms et aucune perte |
+| Cloud gaming, 720p | ≥ 15 Mbps, ping ≤ 40 ms, gigue ≤ 20 ms et aucune perte |
+| Film UHD / 4K | ≥ 25 Mbps |
+| Film HD / 1080p | ≥ 5 Mbps |
+| Web et musique | ≥ 1 Mbps |
+
+Tant qu'une mesure nécessaire n'est pas disponible ou que la surveillance est arrêtée, l'indicateur reste « — » plutôt que d'afficher un résultat trompeur. Un débit suffisant conserve le badge « Oui » pour le streaming et le Web ; si le diagnostic est « Mauvais » à cause de pertes de paquets, un avertissement signale le risque de coupures. Les temps estimés utilisent `taille en Mo × 8 / débit descendant en Mbps` avec des fichiers types de 5 Mo, 1 500 Mo et 7 000 Mo. Ce sont des estimations théoriques : la charge réseau et les serveurs peuvent allonger le téléchargement réel.
+
+## Identité visuelle
+
+L'interface utilise un thème noir et néon avec l'image locale `IMG.jpeg`, assombrie par un calque noir à 80 %, des onglets translucides et un bouton de surveillance bordé de vert. L'arrière-plan est une image statique : aucune boucle de rendu, aucun cube animé et aucune animation d'introduction ne sollicitent le processeur en continu. Le script Flutter copie également l'image dans les assets du projet généré.
 
 ---
 
@@ -95,4 +113,4 @@ Pourquoi le service reste natif : un service Dart en arrière-plan impose de gar
 
 ## Limites connues
 - Le ping est un temps de connexion TCP, pas un ICMP : il suit de près le ping classique mais peut en différer de quelques ms.
-- Le code n'a pas pu être compilé dans l'environnement de rédaction (dépôts Android bloqués) ; seule la logique des 4 états a été testée (16 cas limites, tous passés). Si Gradle signale une erreur à la première compilation, envoyez-moi le message exact.
+- La compilation Android debug a été validée avec `gradlew assembleDebug`. Les tests de débit utilisent Cloudflare et peuvent échouer si le réseau bloque ce service.

@@ -49,6 +49,7 @@ class NetworkMonitorService : Service() {
 
     // Dernier débit connu, valable uniquement pour le réseau en cours.
     private var speedMbps: Double? = null
+    private var uploadMbps: Double? = null
     private var speedNetwork: Network? = null
     private var speedAt = 0L
 
@@ -129,7 +130,7 @@ class NetworkMonitorService : Service() {
     private suspend fun runCycle(): NetworkQuality {
         val net = network
         val metrics = if (net == null) {
-            NetworkMetrics(false, null, null, 100.0, SignalLevel.UNKNOWN, null, Transport.OTHER)
+            NetworkMetrics(false, null, null, 100.0, SignalLevel.UNKNOWN, null, null, Transport.OTHER)
         } else {
             val caps = cm.getNetworkCapabilities(net)
             val transport = when {
@@ -143,6 +144,7 @@ class NetworkMonitorService : Service() {
             if (speedNetwork != net) {
                 speedNetwork = net
                 speedMbps = null
+                uploadMbps = null
                 speedAt = 0L
             }
             val interval = if (transport == Transport.CELLULAR) SPEED_EVERY_CELL_MS else SPEED_EVERY_WIFI_MS
@@ -150,6 +152,7 @@ class NetworkMonitorService : Service() {
             // On ne gaspille pas de données sur un réseau déjà jugé mauvais.
             if (online && due && (probe.pingMs ?: Double.MAX_VALUE) <= QualityEvaluator.PING_FAIBLE_MAX) {
                 NetworkProbe.downloadMbps(net)?.let { speedMbps = it }
+                NetworkProbe.uploadMbps(net)?.let { uploadMbps = it }
                 speedAt = System.currentTimeMillis()
             }
 
@@ -160,6 +163,7 @@ class NetworkMonitorService : Service() {
                 lossPercent = probe.lossPercent,
                 signal = SignalReader.read(this, transport),
                 downloadMbps = speedMbps,
+                uploadMbps = uploadMbps,
                 transport = transport
             )
         }
@@ -171,6 +175,7 @@ class NetworkMonitorService : Service() {
                 quality = quality,
                 metrics = metrics,
                 lastSpeedMbps = metrics.downloadMbps,
+                lastUploadMbps = metrics.uploadMbps,
                 updatedAt = System.currentTimeMillis()
             )
         }

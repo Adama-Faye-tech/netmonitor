@@ -12,3 +12,5 @@ dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/netmonitor_background.jpg

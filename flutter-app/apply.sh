@@ -13,11 +13,17 @@ NATIVE="$TARGET/android/app/src/main/kotlin/com/netmonitor/app"
 
 cp "$HERE/overlay/pubspec.yaml" "$TARGET/pubspec.yaml"
 cp "$HERE/overlay/lib/main.dart" "$TARGET/lib/main.dart"
+mkdir -p "$TARGET/assets"
+cp "$HERE/overlay/assets/netmonitor_background.jpg" "$TARGET/assets/"
 rm -rf "$TARGET/test"
 
-mkdir -p "$NATIVE" "$TARGET/android/app/src/main/res/drawable"
+mkdir -p "$NATIVE" "$TARGET/android/app/src/main/res/drawable" \
+  "$TARGET/android/app/src/main/res/values" "$TARGET/android/app/src/main/res/values-v31"
 cp "$HERE/overlay/android/app/src/main/AndroidManifest.xml" "$TARGET/android/app/src/main/AndroidManifest.xml"
 cp "$HERE/overlay/android/app/src/main/res/drawable/ic_stat_signal.xml" "$TARGET/android/app/src/main/res/drawable/"
+cp "$HERE/overlay/android/app/src/main/res/drawable/ic_splash_netmonitor.xml" "$TARGET/android/app/src/main/res/drawable/"
+cp "$HERE/overlay/android/app/src/main/res/values/styles.xml" "$TARGET/android/app/src/main/res/values/"
+cp "$HERE/overlay/android/app/src/main/res/values-v31/styles.xml" "$TARGET/android/app/src/main/res/values-v31/"
 
 # Service, sondes, évaluateur… : mêmes fichiers que la version Kotlin (sauf son MainActivity).
 for f in "$SHARED"/*.kt; do

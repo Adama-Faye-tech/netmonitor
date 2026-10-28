@@ -27,7 +27,7 @@ enum class Transport(val label: String) {
 /**
  * Photo instantanée du réseau.
  * pingMs / jitterMs sont null quand aucune sonde n'a abouti.
- * downloadMbps = dernier débit mesuré sur ce réseau (le test de débit est rare, pour économiser batterie et data).
+ * Les débits sont ceux du dernier test sur ce réseau (rare, pour économiser batterie et data).
  */
 data class NetworkMetrics(
     val hasInternet: Boolean,
@@ -36,6 +36,7 @@ data class NetworkMetrics(
     val lossPercent: Double,
     val signal: SignalLevel,
     val downloadMbps: Double?,
+    val uploadMbps: Double?,
     val transport: Transport
 ) {
     /** Résumé court pour les notifications. */
@@ -67,8 +68,10 @@ object QualityEvaluator {
     /** Toute perte strictement supérieure à ce taux => Mauvais (0 % = tolérance zéro). */
     const val LOSS_MAX_PERCENT = 0.0
 
-    /** Un débit supérieur à ce seuil peut remplacer un signal « très fort » pour Excellent. */
+    /** Seuil Wi-Fi : un débit supérieur peut remplacer un signal « très fort » pour Excellent. */
     const val SPEED_EXCELLENT_MIN_MBPS = 25.0
+    /** Seuil mobile : tient compte des débits plus faibles des réseaux cellulaires. */
+    const val CELLULAR_SPEED_EXCELLENT_MIN_MBPS = 5.0
 
     fun evaluate(m: NetworkMetrics): NetworkQuality {
         val ping = m.pingMs
@@ -87,7 +90,12 @@ object QualityEvaluator {
         // 3) EXCELLENT : ping < 20, gigue < 5, et signal très fort OU débit > 25 Mbps.
         //    Si le capteur de signal est indisponible (UNKNOWN), on ne pénalise pas :
         //    ce sont alors le ping et la gigue qui décident.
-        val fastEnough = (m.downloadMbps ?: 0.0) > SPEED_EXCELLENT_MIN_MBPS
+        val speedThreshold = if (m.transport == Transport.CELLULAR) {
+            CELLULAR_SPEED_EXCELLENT_MIN_MBPS
+        } else {
+            SPEED_EXCELLENT_MIN_MBPS
+        }
+        val fastEnough = (m.downloadMbps ?: 0.0) > speedThreshold
         val signalOk = m.signal == SignalLevel.VERY_STRONG || m.signal == SignalLevel.UNKNOWN || fastEnough
         if (ping < PING_EXCELLENT_MAX && jitter < JITTER_EXCELLENT_MAX && signalOk) {
             return NetworkQuality.EXCELLENT

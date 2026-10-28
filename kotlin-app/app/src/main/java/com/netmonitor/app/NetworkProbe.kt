@@ -31,6 +31,8 @@ object NetworkProbe {
 
     // Point de test de débit (1 Mo). Remplaçable par votre propre serveur.
     private const val SPEED_URL = "https://speed.cloudflare.com/__down?bytes=1000000"
+    private const val UPLOAD_URL = "https://speed.cloudflare.com/__up"
+    private const val UPLOAD_BYTES = 1_000_000
 
     data class PingResult(
         val pingMs: Double?,      // moyenne des RTT réussis
@@ -103,6 +105,46 @@ object NetworkProbe {
                     val seconds = (System.nanoTime() - start) / 1_000_000_000.0
                     if (bytes < 100_000 || seconds <= 0.0) null
                     else bytes * 8 / seconds / 1_000_000.0
+                }
+            } finally {
+                conn.disconnect()
+            }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Débit montant approximatif en Mbps, mesuré avec un envoi de 1 Mo.
+     * Le temps inclut la réception de la réponse du serveur.
+     */
+    suspend fun uploadMbps(network: Network): Double? = withContext(Dispatchers.IO) {
+        try {
+            val conn = network.openConnection(URL(UPLOAD_URL)) as HttpURLConnection
+            conn.connectTimeout = 3000
+            conn.readTimeout = 5000
+            conn.requestMethod = "POST"
+            conn.doOutput = true
+            conn.useCaches = false
+            conn.setRequestProperty("Content-Type", "application/octet-stream")
+            conn.setFixedLengthStreamingMode(UPLOAD_BYTES)
+            try {
+                val buffer = ByteArray(16 * 1024) { (it % 251).toByte() }
+                val start = System.nanoTime()
+                conn.outputStream.use { output ->
+                    var remaining = UPLOAD_BYTES
+                    while (remaining > 0) {
+                        val count = minOf(buffer.size, remaining)
+                        output.write(buffer, 0, count)
+                        remaining -= count
+                    }
+                }
+                val responseCode = conn.responseCode
+                val seconds = (System.nanoTime() - start) / 1_000_000_000.0
+                if (responseCode in 200..299 && seconds > 0.0) {
+                    UPLOAD_BYTES * 8 / seconds / 1_000_000.0
+                } else {
+                    null
                 }
             } finally {
                 conn.disconnect()

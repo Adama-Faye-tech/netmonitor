@@ -17,6 +17,7 @@ object NetworkStateHolder {
         val metrics: NetworkMetrics? = null,
         /** Dernier débit mesuré (conservé entre deux tests pour l'affichage). */
         val lastSpeedMbps: Double? = null,
+        val lastUploadMbps: Double? = null,
         val updatedAt: Long = 0L
     ) {
         /** Version sérialisable (utilisée par le pont Flutter). */
@@ -27,6 +28,7 @@ object NetworkStateHolder {
             "jitter" to metrics?.jitterMs,
             "loss" to metrics?.lossPercent,
             "download" to lastSpeedMbps,
+            "upload" to lastUploadMbps,
             "signal" to metrics?.signal?.label,
             "transport" to metrics?.transport?.label,
             "updatedAt" to updatedAt

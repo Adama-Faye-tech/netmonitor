@@ -1,70 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="#020604">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Qualité du réseau"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/badge"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/badge_bg"
-        android:gravity="center"
-        android:text="—"
-        android:textColor="#FFFFFF"
-        android:textSize="40sp"
-        android:textStyle="bold" />
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:stretchColumns="1">
-
-        <TableRow android:paddingVertical="8dp">
-            <TextView android:text="Ping" android:textSize="16sp" />
-            <TextView android:id="@+id/ping" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
-        </TableRow>
-        <TableRow android:paddingVertical="8dp">
-            <TextView android:text="Gigue" android:textSize="16sp" />
-            <TextView android:id="@+id/jitter" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
-        </TableRow>
-        <TableRow android:paddingVertical="8dp">
-            <TextView android:text="Débit" android:textSize="16sp" />
-            <TextView android:id="@+id/speed" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
-        </TableRow>
-        <TableRow android:paddingVertical="8dp">
-            <TextView android:text="Perte de paquets" android:textSize="16sp" />
-            <TextView android:id="@+id/loss" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
-        </TableRow>
-        <TableRow android:paddingVertical="8dp">
-            <TextView android:text="Signal" android:textSize="16sp" />
-            <TextView android:id="@+id/signal" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
-        </TableRow>
-        <TableRow android:paddingVertical="8dp">
-            <TextView android:text="Connexion" android:textSize="16sp" />
-            <TextView android:id="@+id/transport" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
-        </TableRow>
-    </TableLayout>
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:elevation="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/netmonitor_background" />
 
     <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <Button
-        android:id="@+id/toggle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Démarrer la surveillance" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:elevation="1dp"
+        android:background="#CC000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="38dp"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/tab_network"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="Qualité réseau"
+                android:textAllCaps="false"
+                android:textColor="#EAF5EE"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/tab_usages"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:text="Usages"
+                android:textAllCaps="false"
+                android:textColor="#A5B5AA"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ScrollView
+                android:id="@+id/network_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:letterSpacing="0.08"
+                        android:text="QUALITÉ DU RÉSEAU"
+                        android:textColor="#D8E9DE"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/badge"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/badge_bg"
+                        android:gravity="center"
+                        android:text="—"
+                        android:textColor="#FFFFFF"
+                        android:textSize="36sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/metrics_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:orientation="vertical"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="#99101914"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start|center_vertical" android:text="Ping" android:textColor="#F2FFF6" android:textSize="15sp" android:textStyle="normal" />
+                            <TextView android:id="@+id/ping" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="end|center_vertical" android:maxWidth="155dp" android:text="—" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="#66101914"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start|center_vertical" android:text="Gigue" android:textColor="#F2FFF6" android:textSize="15sp" />
+                            <TextView android:id="@+id/jitter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="end|center_vertical" android:maxWidth="155dp" android:text="—" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="#99101914"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start|center_vertical" android:text="Téléchargement" android:textColor="#F2FFF6" android:textSize="15sp" />
+                            <TextView android:id="@+id/download" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="end|center_vertical" android:maxWidth="155dp" android:text="—" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="#66101914"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start|center_vertical" android:text="Débit montant" android:textColor="#F2FFF6" android:textSize="15sp" />
+                            <TextView android:id="@+id/upload" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="end|center_vertical" android:maxWidth="155dp" android:text="—" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="#99101914"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start|center_vertical" android:text="Perte de paquets" android:textColor="#F2FFF6" android:textSize="15sp" />
+                            <TextView android:id="@+id/loss" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="end|center_vertical" android:maxWidth="155dp" android:text="—" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="#66101914"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start|center_vertical" android:text="Signal" android:textColor="#F2FFF6" android:textSize="15sp" />
+                            <TextView android:id="@+id/signal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="end|center_vertical" android:maxWidth="155dp" android:text="—" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:background="#99101914"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="12dp"
+                            android:paddingBottom="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="start|center_vertical" android:text="Connexion" android:textColor="#F2FFF6" android:textSize="15sp" />
+                            <TextView android:id="@+id/transport" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="end|center_vertical" android:maxWidth="155dp" android:text="—" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/usages_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="8dp"
+                android:fillViewport="true"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/usages_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="12dp" />
+            </ScrollView>
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/toggle"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_monitor_button"
+            android:letterSpacing="0.06"
+            android:text="LANCER LA SURVEILLANCE"
+            android:textAllCaps="true"
+            android:textColor="#56FF9F"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</FrameLayout>
