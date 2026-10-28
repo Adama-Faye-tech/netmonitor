@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Qualité du réseau"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/badge"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/badge_bg"
+        android:gravity="center"
+        android:text="—"
+        android:textColor="#FFFFFF"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:stretchColumns="1">
+
+        <TableRow android:paddingVertical="8dp">
+            <TextView android:text="Ping" android:textSize="16sp" />
+            <TextView android:id="@+id/ping" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
+        </TableRow>
+        <TableRow android:paddingVertical="8dp">
+            <TextView android:text="Gigue" android:textSize="16sp" />
+            <TextView android:id="@+id/jitter" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
+        </TableRow>
+        <TableRow android:paddingVertical="8dp">
+            <TextView android:text="Débit" android:textSize="16sp" />
+            <TextView android:id="@+id/speed" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
+        </TableRow>
+        <TableRow android:paddingVertical="8dp">
+            <TextView android:text="Perte de paquets" android:textSize="16sp" />
+            <TextView android:id="@+id/loss" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
+        </TableRow>
+        <TableRow android:paddingVertical="8dp">
+            <TextView android:text="Signal" android:textSize="16sp" />
+            <TextView android:id="@+id/signal" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
+        </TableRow>
+        <TableRow android:paddingVertical="8dp">
+            <TextView android:text="Connexion" android:textSize="16sp" />
+            <TextView android:id="@+id/transport" android:gravity="end" android:text="—" android:textSize="18sp" android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Démarrer la surveillance" />
+</LinearLayout>
